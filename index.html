@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
 <style>
   :root{
@@ -73,6 +74,21 @@
     content:""; position:absolute; left:0; top:9px; width:6px; height:6px; background:var(--acero-blue-300); border-radius:1px;
   }
   .acero-plainlist strong{ color:var(--acero-slate-900); }
+
+  /* ---------- Bot placeholder marker (Phase 4 replaces with the real Three.js bot) ---------- */
+  #acero-main{ position:relative; }
+  .acero-bot-marker{
+    position:absolute; top:40px; left:12%; width:26px; height:26px; z-index:5; pointer-events:none;
+    background:linear-gradient(135deg, var(--acero-blue-400), var(--acero-blue));
+    border-radius:8px; transform:translate(-50%,-50%) rotate(45deg);
+    box-shadow:0 14px 30px -10px rgba(22,78,189,0.55);
+    animation:acero-bot-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes acero-bot-pulse{
+    0%,100%{ transform:translate(-50%,-50%) rotate(45deg) scale(1); }
+    50%{ transform:translate(-50%,-50%) rotate(45deg) scale(1.14); }
+  }
+  @media (max-width:899px){ .acero-bot-marker{ display:none; } }
 
   /* ---------- Layout order utilities (desktop-only inversion) ---------- */
   @media (min-width:900px){
@@ -388,6 +404,7 @@
   </header>
 
   <main id="acero-main">
+    <div class="acero-bot-marker" aria-hidden="true"></div>
 
     <!-- HERO -->
     <section id="acero-hero" class="acero-section acero-section--navy acero-hero" aria-label="Introduction">
@@ -421,7 +438,7 @@
             <div class="acero-tagrow__item"><p class="acero-tagrow__label">GEO</p><p class="acero-tagrow__desc">Entity &amp; citation structure for ChatGPT, Gemini, Perplexity.</p></div>
           </div>
         </div>
-        <div class="acero-seo-visual">
+        <div class="acero-seo-visual" data-acero-pin>
           <div class="acero-serp" data-acero-anim="serp" aria-hidden="true">
             <div class="acero-serp__bar">
               <span class="acero-serp__dot"></span><span class="acero-serp__dot"></span><span class="acero-serp__dot"></span>
@@ -457,7 +474,7 @@
           <h2 id="acero-leadgen-h">Traffic that converts into pipeline.</h2>
           <p>Traffic without a capture system is wasted spend. We build the system that turns visits into pipeline: <strong>funnels</strong> engineered around one clear next step, <strong>lead magnets</strong> matched to real buyer pain points, and <strong>nurture</strong> that moves a lead forward the moment it converts.</p>
         </div>
-        <div class="acero-funnel-wrap acero-order-1">
+        <div class="acero-funnel-wrap acero-order-1" data-acero-pin>
           <div class="acero-funnel" data-acero-anim="funnel" aria-hidden="true">
             <div class="acero-funnel__row"><span class="acero-funnel__label">Visitors</span><div class="acero-funnel__bar"><div class="acero-funnel__bar-fill"></div></div></div>
             <div class="acero-funnel__row"><span class="acero-funnel__label">Leads</span><div class="acero-funnel__bar"><div class="acero-funnel__bar-fill"></div></div></div>
@@ -510,7 +527,7 @@
             <div class="acero-speclist__row"><dt>Integration</dt><dd>Wired directly to your CRM and tracking stack.</dd></div>
           </dl>
         </div>
-        <div class="acero-browser-wrap acero-order-1">
+        <div class="acero-browser-wrap acero-order-1" data-acero-pin>
           <div class="acero-browser" data-acero-anim="browser" aria-hidden="true">
             <div class="acero-browser__chrome">
               <span class="acero-browser__dot"></span><span class="acero-browser__dot"></span><span class="acero-browser__dot"></span>
@@ -544,7 +561,7 @@
             <li><strong>Revenue reporting</strong> that closes the loop back into strategy.</li>
           </ul>
         </div>
-        <div class="acero-crm-visual">
+        <div class="acero-crm-visual" data-acero-pin>
           <div class="acero-dash" data-acero-anim="dash" aria-hidden="true">
             <div class="acero-dash__head">
               <span class="acero-dash__head-title">Revenue Framework &mdash; Live View</span>
@@ -579,7 +596,7 @@
           </div>
           <p class="acero-inline-note">Both run inside the same CRM and pipeline as everything above.</p>
         </div>
-        <div class="acero-chat-wrap">
+        <div class="acero-chat-wrap" data-acero-pin>
           <div class="acero-chat" data-acero-anim="chat" aria-hidden="true">
             <div class="acero-bubble acero-bubble--in">Hi &mdash; do you have anyone available this week for a quote?</div>
             <div class="acero-chat__typing" data-acero-typing-for="1"><span></span><span></span><span></span></div>
@@ -641,6 +658,11 @@
       lenis.raf(time * 1000);
     });
     gsap.ticker.lagSmoothing(0);
+
+    if (window.ScrollTrigger){
+      gsap.registerPlugin(ScrollTrigger);
+      lenis.on('scroll', ScrollTrigger.update);
+    }
 
     window.__aceroLenis = lenis;
 
@@ -817,6 +839,86 @@
     }, { passive: true });
     update();
   })();
+
+  // ---- Phase 3: GSAP ScrollTrigger — section pinning + bot-placeholder travel ----
+  if (window.gsap && window.ScrollTrigger){
+    gsap.registerPlugin(ScrollTrigger);
+
+    ScrollTrigger.matchMedia({
+      // Desktop only: pinning is the "no scroll-jacking on mobile" line in the brief.
+      "(min-width: 900px)": function(){
+
+        // Pin each section's visual (SERP stack, funnel, browser frame, dashboard,
+        // chat thread) in place while its copy column scrolls past. Automation's
+        // diagram is already full-bleed background, so it's intentionally excluded.
+        document.querySelectorAll('[data-acero-pin]').forEach(function(visual){
+          var section = visual.closest('.acero-section');
+          if (!section) return;
+          ScrollTrigger.create({
+            trigger: section,
+            start: 'top top+=84',
+            end: '+=280',
+            pin: visual,
+            pinSpacing: true
+          });
+        });
+
+        // Placeholder bot marker: travels the full height of <main>, snapping toward
+        // whichever side each section's visual sits on. Phase 4 replaces this 2D
+        // stand-in with the real Three.js bot sampled along a spline by scroll
+        // progress — the checkpoints below are that same progress mapping, just
+        // driving a CSS top/left instead of a 3D curve.
+        var marker = document.querySelector('.acero-bot-marker');
+        var main = document.getElementById('acero-main');
+        if (marker && main){
+          var checkpoints = [
+            { id: 'acero-hero', side: 14 },
+            { id: 'acero-seo', side: 84 },
+            { id: 'acero-leadgen', side: 14 },
+            { id: 'acero-automation', side: 66 },
+            { id: 'acero-web', side: 16 },
+            { id: 'acero-crm', side: 80 },
+            { id: 'acero-va', side: 84 },
+            { id: 'acero-closing', side: 50 }
+          ];
+          var mainTop = main.getBoundingClientRect().top + window.scrollY;
+          var mainHeight = main.offsetHeight;
+          var tl = gsap.timeline({
+            defaults: { ease: 'none' },
+            scrollTrigger: {
+              trigger: main,
+              start: 'top top',
+              end: 'bottom bottom',
+              scrub: 0.6
+            }
+          });
+          var prevPos = 0;
+          checkpoints.forEach(function(cp, idx){
+            var el = document.getElementById(cp.id);
+            if (!el) return;
+            var rect = el.getBoundingClientRect();
+            var centerY = rect.top + window.scrollY - mainTop + rect.height / 2;
+            var pos = Math.max(0, Math.min(1, centerY / mainHeight));
+            if (idx === 0){
+              tl.set(marker, { top: centerY, left: cp.side + '%' }, 0);
+            } else {
+              tl.to(marker, { top: centerY, left: cp.side + '%', duration: Math.max(pos - prevPos, 0.01) }, prevPos);
+            }
+            prevPos = pos;
+          });
+        }
+
+        return function(){
+          // ScrollTrigger.matchMedia handles killing these triggers automatically
+          // when the viewport crosses back below 900px.
+        };
+      }
+    });
+
+    window.addEventListener('load', function(){
+      ScrollTrigger.refresh();
+    });
+  }
 
 })();
 </script>
