@@ -72,6 +72,39 @@
   }
   .acero-plainlist strong{ color:var(--acero-slate-900); }
 
+  /* ---------- Layout order utilities (desktop-only inversion) ---------- */
+  @media (min-width:900px){
+    .acero-order-1{ order:1; }
+    .acero-order-2{ order:2; }
+  }
+
+  /* ---------- Bespoke marker/list variants (one per section, no repeats) ---------- */
+  .acero-tagrow{ display:flex; gap:20px; margin-top:26px; flex-wrap:wrap; }
+  .acero-tagrow__item{ flex:1 1 130px; border-top:2px solid var(--acero-blue-300); padding-top:10px; }
+  .acero-tagrow__label{ font-size:13px; font-weight:800; letter-spacing:0.04em; color:var(--acero-blue-700); }
+  .acero-tagrow__desc{ font-size:12.5px; color:var(--acero-slate-500); margin-top:5px; line-height:1.4; }
+
+  .acero-dashlist{ display:grid; gap:11px; margin-top:22px; }
+  .acero-dashlist li{ font-size:14.5px; color:var(--acero-slate-700); padding-left:24px; position:relative; }
+  .acero-dashlist li::before{ content:""; position:absolute; left:0; top:10px; width:14px; height:2px; background:var(--acero-blue-400); }
+  .acero-dashlist strong{ color:var(--acero-slate-900); }
+
+  .acero-checklist{ display:grid; gap:11px; margin-top:22px; }
+  .acero-checklist li{ font-size:14.5px; color:var(--acero-slate-700); padding-left:24px; position:relative; }
+  .acero-checklist li::before{ content:"\2713"; position:absolute; left:0; top:-1px; color:var(--acero-blue); font-weight:700; font-size:13px; }
+  .acero-checklist strong{ color:var(--acero-slate-900); }
+
+  .acero-speclist{ margin-top:24px; border-top:1px solid var(--acero-slate-200); }
+  .acero-speclist__row{ display:grid; grid-template-columns:118px 1fr; gap:12px; padding:11px 0; border-bottom:1px solid var(--acero-slate-200); }
+  .acero-speclist__row dt{ font-size:11.5px; font-weight:700; letter-spacing:0.03em; color:var(--acero-slate-400); margin:0; }
+  .acero-speclist__row dd{ font-size:13.5px; color:var(--acero-slate-900); margin:0; font-weight:500; }
+
+  .acero-rolecards{ display:flex; gap:22px; margin-top:26px; flex-wrap:wrap; }
+  .acero-rolecard{ flex:1 1 150px; border-left:2px solid var(--acero-blue-300); padding-left:14px; }
+  .acero-rolecard__title{ font-size:14px; font-weight:700; color:var(--acero-slate-900); margin:0 0 4px; }
+  .acero-rolecard__desc{ font-size:12.5px; color:var(--acero-slate-500); margin:0; line-height:1.4; }
+  .acero-inline-note{ font-size:13px; color:var(--acero-slate-500); margin-top:16px; }
+
   /* ---------- Header ---------- */
   .acero-header{
     position:sticky; top:0; z-index:100;
@@ -141,14 +174,18 @@
   .acero-service-copy h2{ font-size:clamp(25px, 3.2vw, 34px); }
   .acero-service-copy > p{ font-size:15px; max-width:50ch; }
 
+  @media (min-width:900px){
+    .acero-seo-visual{ margin-top:56px; }
+    .acero-crm-visual{ margin-top:72px; }
+  }
+
   /* ================= 1. SEO — SERP stack ================= */
   .acero-serp{
     background:var(--acero-white); border:1px solid var(--acero-slate-200); border-radius:10px;
     box-shadow:0 24px 48px -30px rgba(10,21,51,0.4); overflow:hidden;
   }
   .acero-serp__bar{ display:flex; align-items:center; gap:10px; padding:14px 16px; background:var(--acero-slate-100); border-bottom:1px solid var(--acero-slate-200); }
-  .acero-serp__dot{ width:9px; height:9px; border-radius:50%; background:var(--acero-blue-300); flex:none; }
-  .acero-serp__dot:nth-child(2){ background:var(--acero-slate-200); }
+  .acero-serp__dot{ width:8px; height:8px; border-radius:50%; background:var(--acero-slate-200); flex:none; }
   .acero-serp__query{ font-size:13.5px; color:var(--acero-slate-900); white-space:nowrap; overflow:hidden; }
   .acero-serp__caret{ width:1px; height:15px; background:var(--acero-slate-900); animation:acero-blink 1s step-end infinite; }
   @keyframes acero-blink{ 50%{ opacity:0; } }
@@ -170,9 +207,9 @@
   /* ================= 2. LEAD GEN — funnel ================= */
   .acero-funnel-wrap{ position:relative; }
   @media (min-width:900px){
-    .acero-funnel-wrap{ margin-right:calc(50% - 50vw); padding-right:6vw; }
+    .acero-funnel-wrap{ margin-left:calc(50% - 50vw); padding-left:6vw; }
   }
-  .acero-funnel{ display:grid; gap:10px; max-width:420px; margin-left:auto; }
+  .acero-funnel{ display:grid; gap:10px; max-width:420px; margin-right:auto; }
   .acero-funnel__row{ display:grid; grid-template-columns:auto 1fr; align-items:center; gap:14px; }
   .acero-funnel__label{ font-size:12.5px; color:var(--acero-slate-500); text-align:right; width:74px; }
   .acero-funnel__bar{ height:40px; border-radius:6px; background:var(--acero-blue-100); position:relative; overflow:hidden; }
@@ -188,7 +225,13 @@
   .acero-js-motion .acero-funnel__row.is-in .acero-funnel__bar-fill{ transform:scaleX(1); }
 
   /* ================= 3. AUTOMATION — node diagram ================= */
-  .acero-flow{ position:relative; width:100%; aspect-ratio:600/400; max-width:560px; margin-left:auto; }
+  .acero-automation-stage{ position:relative; }
+  @media (min-width:900px){
+    .acero-automation-stage{ min-height:520px; }
+    .acero-automation-stage .acero-service-copy{ position:relative; z-index:2; max-width:400px; }
+    .acero-automation-stage .acero-flow{ position:absolute; inset:0; max-width:none; margin:0; width:100%; height:100%; z-index:1; }
+  }
+  .acero-flow{ position:relative; width:100%; aspect-ratio:600/400; max-width:560px; margin-left:auto; margin-top:32px; }
   .acero-flow svg{ width:100%; height:100%; overflow:visible; }
   .acero-flow__path{ fill:none; stroke:var(--acero-blue-300); stroke-width:2; }
   .acero-flow__path--main{ stroke:var(--acero-blue-500); }
@@ -196,7 +239,7 @@
   .acero-flow__node--crm{ border-color:var(--acero-blue); color:var(--acero-blue-700); }
   .acero-flow__pulse{ fill:var(--acero-blue); opacity:0; }
   .acero-js-motion .acero-flow__pulse.is-running{
-    offset-path:path("M436,200 C470,200 510,200 548,200");
+    offset-path:path("M404,200 C440,200 500,200 532,200");
     offset-rotate:0deg;
     animation:acero-travel 1.8s ease-in-out infinite;
   }
@@ -217,21 +260,33 @@
   .acero-browser__chrome{ display:flex; align-items:center; gap:8px; padding:10px 12px; background:var(--acero-slate-100); border-bottom:1px solid var(--acero-slate-200); }
   .acero-browser__dot{ width:8px; height:8px; border-radius:50%; background:var(--acero-slate-200); }
   .acero-browser__url{ margin-left:8px; font-size:11px; color:var(--acero-slate-400); background:var(--acero-white); border-radius:999px; padding:3px 12px; flex:1; }
-  .acero-browser__body{ padding:18px; display:grid; gap:12px; }
-  .acero-browser__block{ background:var(--acero-slate-200); border-radius:6px; height:14px; }
-  .acero-browser__block--hero{ height:64px; background:var(--acero-blue-100); }
-  .acero-browser__block--btn{ height:28px; width:40%; background:var(--acero-blue-300); }
-  .acero-browser__block--w60{ width:60%; }
-  .acero-browser__block--w80{ width:80%; }
+  .acero-browser__body{ padding:18px; display:grid; gap:14px; }
+  .acero-browser__nav{ display:flex; gap:14px; font-size:10px; font-weight:600; color:var(--acero-slate-500); }
+  .acero-browser__hero{ background:var(--acero-blue-100); border-radius:6px; padding:16px; position:relative; overflow:hidden; }
+  .acero-browser__hero-title{ font-size:16px; font-weight:800; color:var(--acero-navy-900); margin:0 0 4px; }
+  .acero-browser__hero-sub{ font-size:10.5px; color:var(--acero-slate-500); margin:0 0 12px; }
+  .acero-browser__cta{ display:inline-block; font-size:10px; font-weight:700; color:var(--acero-white); background:var(--acero-blue); border-radius:5px; padding:5px 12px; }
+  .acero-browser__line{ font-size:11px; color:var(--acero-slate-500); margin:0; }
+  .acero-browser__tags{ display:flex; gap:8px; }
+  .acero-browser__tags span{ font-size:9.5px; font-weight:700; color:var(--acero-blue-700); background:var(--acero-blue-100); border-radius:999px; padding:3px 10px; }
 
-  .acero-js-motion .acero-browser__block{ position:relative; overflow:hidden; background:var(--acero-slate-200); }
-  .acero-js-motion .acero-browser__block::after{
-    content:""; position:absolute; inset:0; background:linear-gradient(90deg, var(--acero-slate-200) 25%, var(--acero-slate-100) 37%, var(--acero-slate-200) 63%);
+  .acero-js-motion .acero-browser__hero::after{
+    content:""; position:absolute; inset:0; background:linear-gradient(90deg, var(--acero-blue-100) 25%, var(--acero-blue-300) 37%, var(--acero-blue-100) 63%);
     background-size:400% 100%; animation:acero-skeleton 1.4s ease infinite;
   }
-  .acero-js-motion .acero-browser.is-in .acero-browser__block::after{ animation:none; content:none; }
-  .acero-js-motion .acero-browser.is-in .acero-browser__block--hero{ background:var(--acero-blue-100); }
-  .acero-js-motion .acero-browser.is-in .acero-browser__block--btn{ background:var(--acero-blue-300); }
+  .acero-js-motion .acero-browser__hero-title,
+  .acero-js-motion .acero-browser__hero-sub,
+  .acero-js-motion .acero-browser__cta{ opacity:0; transition:opacity .4s ease; position:relative; }
+  .acero-js-motion .acero-browser__nav,
+  .acero-js-motion .acero-browser__line,
+  .acero-js-motion .acero-browser__tags{ opacity:0; transition:opacity .4s ease .2s; }
+  .acero-js-motion .acero-browser.is-in .acero-browser__hero::after{ animation:none; content:none; }
+  .acero-js-motion .acero-browser.is-in .acero-browser__hero-title,
+  .acero-js-motion .acero-browser.is-in .acero-browser__hero-sub,
+  .acero-js-motion .acero-browser.is-in .acero-browser__cta,
+  .acero-js-motion .acero-browser.is-in .acero-browser__nav,
+  .acero-js-motion .acero-browser.is-in .acero-browser__line,
+  .acero-js-motion .acero-browser.is-in .acero-browser__tags{ opacity:1; }
   @keyframes acero-skeleton{ 0%{ background-position:100% 0; } 100%{ background-position:0 0; } }
 
   /* ================= 5. CRM — dashboard ================= */
@@ -239,8 +294,13 @@
     background:var(--acero-white); border:1px solid var(--acero-slate-200); border-radius:12px; padding:24px;
     box-shadow:0 24px 48px -30px rgba(10,21,51,0.4);
   }
+  .acero-dash__head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+  .acero-dash__head-title{ font-size:13px; font-weight:700; color:var(--acero-slate-900); }
+  .acero-dash__live{ display:inline-flex; align-items:center; gap:6px; font-size:11px; color:var(--acero-success); font-weight:600; }
+  .acero-dash__live::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--acero-success); }
   .acero-dash__stages{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:22px; }
   .acero-dash__stage-label{ font-size:11px; color:var(--acero-slate-500); margin-bottom:6px; }
+  .acero-dash__stage-count{ font-size:11.5px; color:var(--acero-slate-900); font-weight:600; margin-top:6px; }
   .acero-dash__stage-bar{ height:10px; border-radius:999px; background:var(--acero-slate-200); overflow:hidden; }
   .acero-dash__stage-bar-fill{ height:100%; width:0; background:var(--acero-blue-300); border-radius:999px; }
   .acero-dash__stage:nth-child(1) .acero-dash__stage-bar-fill{ width:100%; background:var(--acero-blue-100); }
@@ -342,21 +402,21 @@
 
     <!-- 1. SEO & AI SEARCH — SERP stack -->
     <section id="acero-seo" class="acero-section acero-section--light" aria-labelledby="acero-seo-h">
-      <div class="acero-container acero-service-grid" style="--acero-cols:1.05fr 0.95fr;">
+      <div class="acero-container acero-service-grid" style="--acero-cols:1.05fr 0.95fr; align-items:start;">
         <div class="acero-service-copy">
           <p class="acero-tagline">Visible in Google. Cited in ChatGPT.</p>
           <h2 id="acero-seo-h">One system for every way people search now.</h2>
           <p>Search isn&rsquo;t one channel anymore. It&rsquo;s Google, AI Overviews, and ChatGPT citations &mdash; three surfaces, one system to win them.</p>
-          <ul class="acero-plainlist">
-            <li><strong>SEO</strong> &mdash; technical health, on-page structure, authority.</li>
-            <li><strong>AEO</strong> &mdash; answer-engine formatting that gets pulled into AI Overviews.</li>
-            <li><strong>GEO</strong> &mdash; entity and citation structure built for ChatGPT, Gemini, Perplexity.</li>
-          </ul>
+          <div class="acero-tagrow">
+            <div class="acero-tagrow__item"><p class="acero-tagrow__label">SEO</p><p class="acero-tagrow__desc">Technical health, on-page structure, authority.</p></div>
+            <div class="acero-tagrow__item"><p class="acero-tagrow__label">AEO</p><p class="acero-tagrow__desc">Answer-engine formatting pulled into AI Overviews.</p></div>
+            <div class="acero-tagrow__item"><p class="acero-tagrow__label">GEO</p><p class="acero-tagrow__desc">Entity &amp; citation structure for ChatGPT, Gemini, Perplexity.</p></div>
+          </div>
         </div>
-        <div>
+        <div class="acero-seo-visual">
           <div class="acero-serp" data-acero-anim="serp" aria-hidden="true">
             <div class="acero-serp__bar">
-              <span class="acero-serp__dot"></span><span class="acero-serp__dot"></span>
+              <span class="acero-serp__dot"></span><span class="acero-serp__dot"></span><span class="acero-serp__dot"></span>
               <span class="acero-serp__query" data-acero-fulltext="best plumber near [your city]">best plumber near [your city]</span><span class="acero-serp__caret"></span>
             </div>
             <div class="acero-serp__results">
@@ -384,17 +444,12 @@
     <!-- 2. LEAD GENERATION — funnel -->
     <section id="acero-leadgen" class="acero-section acero-section--tint" aria-labelledby="acero-leadgen-h">
       <div class="acero-container acero-service-grid" style="--acero-cols:0.95fr 1.05fr;">
-        <div class="acero-service-copy">
+        <div class="acero-service-copy acero-order-2">
           <p class="acero-tagline">Built to fill the pipeline, not just the inbox.</p>
           <h2 id="acero-leadgen-h">Traffic that converts into pipeline.</h2>
-          <p>Traffic without a capture system is wasted spend. We build the funnels, landing pages, and lead magnets that turn visits into pipeline.</p>
-          <ul class="acero-plainlist">
-            <li><strong>Funnels</strong> engineered around one clear next step.</li>
-            <li><strong>Lead magnets</strong> matched to real buyer pain points.</li>
-            <li><strong>Nurture</strong> that moves a lead forward the moment it converts.</li>
-          </ul>
+          <p>Traffic without a capture system is wasted spend. We build the system that turns visits into pipeline: <strong>funnels</strong> engineered around one clear next step, <strong>lead magnets</strong> matched to real buyer pain points, and <strong>nurture</strong> that moves a lead forward the moment it converts.</p>
         </div>
-        <div class="acero-funnel-wrap">
+        <div class="acero-funnel-wrap acero-order-1">
           <div class="acero-funnel" data-acero-anim="funnel" aria-hidden="true">
             <div class="acero-funnel__row"><span class="acero-funnel__label">Visitors</span><div class="acero-funnel__bar"><div class="acero-funnel__bar-fill"></div></div></div>
             <div class="acero-funnel__row"><span class="acero-funnel__label">Leads</span><div class="acero-funnel__bar"><div class="acero-funnel__bar-fill"></div></div></div>
@@ -406,12 +461,12 @@
 
     <!-- 3. MARKETING AUTOMATION — node diagram -->
     <section id="acero-automation" class="acero-section acero-section--light" aria-labelledby="acero-automation-h">
-      <div class="acero-container acero-service-grid" style="--acero-cols:0.9fr 1.1fr;">
+      <div class="acero-container acero-automation-stage">
         <div class="acero-service-copy">
           <p class="acero-tagline">Every dollar traced to revenue.</p>
           <h2 id="acero-automation-h">Paid, social, and automation &mdash; connected.</h2>
           <p>Paid, social, and automation running as separate line items is how budget disappears. We connect them so every dollar is traceable to a result.</p>
-          <ul class="acero-plainlist">
+          <ul class="acero-dashlist">
             <li><strong>Paid &amp; social</strong> built on the same tracking as your CRM.</li>
             <li><strong>Automation</strong> that follows up before a lead goes cold.</li>
             <li><strong>Reporting</strong> tied to pipeline, not vanity metrics.</li>
@@ -419,16 +474,16 @@
         </div>
         <div class="acero-flow" data-acero-anim="flow" aria-hidden="true">
           <svg viewBox="0 0 600 400">
-            <path class="acero-flow__path" d="M66,64 C220,64 260,190 428,198" />
-            <path class="acero-flow__path" d="M72,332 C220,332 260,220 428,202" />
-            <path class="acero-flow__path acero-flow__path--main" d="M436,200 C470,200 510,200 548,200" />
+            <path class="acero-flow__path" d="M192,56 C300,56 320,170 388,196" />
+            <path class="acero-flow__path" d="M180,344 C300,344 320,230 388,204" />
+            <path class="acero-flow__path acero-flow__path--main" d="M404,200 C440,200 500,200 532,200" />
           </svg>
-          <div class="acero-flow__node" style="left:11%; top:16%;">Paid</div>
-          <div class="acero-flow__node" style="left:12%; top:83%;">Social</div>
-          <div class="acero-flow__node" style="left:72%; top:50%;">Automation</div>
-          <div class="acero-flow__node acero-flow__node--crm" style="left:92%; top:50%;">CRM</div>
+          <div class="acero-flow__node" style="left:32%; top:14%;">Paid</div>
+          <div class="acero-flow__node" style="left:30%; top:86%;">Social</div>
+          <div class="acero-flow__node" style="left:66%; top:50%;">Automation</div>
+          <div class="acero-flow__node acero-flow__node--crm" style="left:90%; top:50%;">CRM</div>
           <svg viewBox="0 0 600 400" style="position:absolute; inset:0;">
-            <circle class="acero-flow__pulse" r="5" cx="436" cy="200"></circle>
+            <circle class="acero-flow__pulse" r="5" cx="404" cy="200"></circle>
           </svg>
         </div>
       </div>
@@ -437,27 +492,31 @@
     <!-- 4. WEBSITE DESIGN & DEVELOPMENT — browser frame -->
     <section id="acero-web" class="acero-section acero-section--tint" aria-labelledby="acero-web-h">
       <div class="acero-container acero-service-grid" style="--acero-cols:1.1fr 0.9fr;">
-        <div class="acero-service-copy">
+        <div class="acero-service-copy acero-order-2">
           <p class="acero-tagline">Built to convert, not just to look good.</p>
           <h2 id="acero-web-h">A revenue system, not a digital brochure.</h2>
           <p>A website is either a revenue system or a digital brochure. We build for the first one &mdash; fast, structured, and wired to capture.</p>
-          <ul class="acero-plainlist">
-            <li><strong>Conversion-first structure</strong> on every page, not just the homepage.</li>
-            <li><strong>Performance</strong> engineered for Core Web Vitals, not just aesthetics.</li>
-            <li><strong>Built to integrate</strong> directly with your CRM and tracking stack.</li>
-          </ul>
+          <dl class="acero-speclist">
+            <div class="acero-speclist__row"><dt>Structure</dt><dd>Conversion-first on every page, not just the homepage.</dd></div>
+            <div class="acero-speclist__row"><dt>Performance</dt><dd>Engineered for Core Web Vitals, not just aesthetics.</dd></div>
+            <div class="acero-speclist__row"><dt>Integration</dt><dd>Wired directly to your CRM and tracking stack.</dd></div>
+          </dl>
         </div>
-        <div class="acero-browser-wrap">
+        <div class="acero-browser-wrap acero-order-1">
           <div class="acero-browser" data-acero-anim="browser" aria-hidden="true">
             <div class="acero-browser__chrome">
               <span class="acero-browser__dot"></span><span class="acero-browser__dot"></span><span class="acero-browser__dot"></span>
               <span class="acero-browser__url">yoursite.com</span>
             </div>
             <div class="acero-browser__body">
-              <div class="acero-browser__block acero-browser__block--hero"></div>
-              <div class="acero-browser__block acero-browser__block--w80"></div>
-              <div class="acero-browser__block acero-browser__block--w60"></div>
-              <div class="acero-browser__block acero-browser__block--btn"></div>
+              <div class="acero-browser__nav"><span>Home</span><span>Services</span><span>Contact</span></div>
+              <div class="acero-browser__hero">
+                <p class="acero-browser__hero-title">Built to Convert</p>
+                <p class="acero-browser__hero-sub">Fast. Structured. Wired to capture.</p>
+                <span class="acero-browser__cta">Get a Quote</span>
+              </div>
+              <p class="acero-browser__line">Core Web Vitals engineered from day one.</p>
+              <div class="acero-browser__tags"><span>CRM-Connected</span><span>Conversion-First</span></div>
             </div>
           </div>
         </div>
@@ -466,24 +525,28 @@
 
     <!-- 5. CRM & REVENUE SYSTEMS — dashboard -->
     <section id="acero-crm" class="acero-section acero-section--light" aria-labelledby="acero-crm-h">
-      <div class="acero-container acero-service-grid" style="--acero-cols:1fr 1fr;">
+      <div class="acero-container acero-service-grid" style="--acero-cols:1fr 1fr; align-items:start;">
         <div class="acero-service-copy">
           <p class="acero-tagline">The Revenue Framework: source to revenue, fully traced.</p>
           <h2 id="acero-crm-h">Every lead traced from source to revenue.</h2>
           <p>If you can&rsquo;t trace a lead from first touch to closed revenue, you can&rsquo;t optimize anything. The Revenue Framework closes that loop.</p>
-          <ul class="acero-plainlist">
+          <ul class="acero-checklist">
             <li><strong>Pipeline architecture</strong> matched to your actual sales process.</li>
             <li><strong>Source-level attribution</strong> &mdash; every lead traced to origin.</li>
             <li><strong>Revenue reporting</strong> that closes the loop back into strategy.</li>
           </ul>
         </div>
-        <div>
+        <div class="acero-crm-visual">
           <div class="acero-dash" data-acero-anim="dash" aria-hidden="true">
+            <div class="acero-dash__head">
+              <span class="acero-dash__head-title">Revenue Framework &mdash; Live View</span>
+              <span class="acero-dash__live">Live</span>
+            </div>
             <div class="acero-dash__stages">
-              <div class="acero-dash__stage"><p class="acero-dash__stage-label">Source</p><div class="acero-dash__stage-bar"><div class="acero-dash__stage-bar-fill"></div></div></div>
-              <div class="acero-dash__stage"><p class="acero-dash__stage-label">MQL</p><div class="acero-dash__stage-bar"><div class="acero-dash__stage-bar-fill"></div></div></div>
-              <div class="acero-dash__stage"><p class="acero-dash__stage-label">SQL</p><div class="acero-dash__stage-bar"><div class="acero-dash__stage-bar-fill"></div></div></div>
-              <div class="acero-dash__stage"><p class="acero-dash__stage-label">Closed</p><div class="acero-dash__stage-bar"><div class="acero-dash__stage-bar-fill"></div></div></div>
+              <div class="acero-dash__stage"><p class="acero-dash__stage-label">Source</p><div class="acero-dash__stage-bar"><div class="acero-dash__stage-bar-fill"></div></div><p class="acero-dash__stage-count">1,240</p></div>
+              <div class="acero-dash__stage"><p class="acero-dash__stage-label">MQL</p><div class="acero-dash__stage-bar"><div class="acero-dash__stage-bar-fill"></div></div><p class="acero-dash__stage-count">918</p></div>
+              <div class="acero-dash__stage"><p class="acero-dash__stage-label">SQL</p><div class="acero-dash__stage-bar"><div class="acero-dash__stage-bar-fill"></div></div><p class="acero-dash__stage-count">595</p></div>
+              <div class="acero-dash__stage"><p class="acero-dash__stage-label">Closed</p><div class="acero-dash__stage-bar"><div class="acero-dash__stage-bar-fill"></div></div><p class="acero-dash__stage-count">335</p></div>
             </div>
             <div class="acero-dash__stat">
               <span class="acero-dash__stat-value" data-acero-count="100" data-acero-suffix="%">100%</span>
@@ -497,16 +560,16 @@
 
     <!-- 6. VIRTUAL ASSISTANTS — chat thread -->
     <section id="acero-va" class="acero-section acero-section--tint" aria-labelledby="acero-va-h">
-      <div class="acero-container acero-service-grid" style="--acero-cols:1fr 1fr;">
+      <div class="acero-container acero-service-grid" style="--acero-cols:1fr 1fr; align-items:end;">
         <div class="acero-service-copy">
           <p class="acero-tagline">No lead waits. No lead gets lost.</p>
           <h2 id="acero-va-h">Coverage that never lets a lead sit.</h2>
           <p>Speed to lead decides more deals than ad spend does. Trained virtual assistants handle first response and support so nothing sits in a queue.</p>
-          <ul class="acero-plainlist">
-            <li><strong>Sales VAs</strong> for immediate qualification and follow-up.</li>
-            <li><strong>Support VAs</strong> for coverage that doesn&rsquo;t depend on your team&rsquo;s hours.</li>
-            <li><strong>Fully integrated</strong> into the same CRM and pipeline as everything above.</li>
-          </ul>
+          <div class="acero-rolecards">
+            <div class="acero-rolecard"><p class="acero-rolecard__title">Sales VA</p><p class="acero-rolecard__desc">Immediate qualification and follow-up.</p></div>
+            <div class="acero-rolecard"><p class="acero-rolecard__title">Support VA</p><p class="acero-rolecard__desc">Coverage that doesn&rsquo;t depend on your team&rsquo;s hours.</p></div>
+          </div>
+          <p class="acero-inline-note">Both run inside the same CRM and pipeline as everything above.</p>
         </div>
         <div class="acero-chat-wrap">
           <div class="acero-chat" data-acero-anim="chat" aria-hidden="true">
