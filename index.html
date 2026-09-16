@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
 <style>
   :root{
     --acero-white:#FFFFFF;
@@ -353,6 +355,12 @@
   @media (prefers-reduced-motion: reduce){
     .acero-root *{ animation:none !important; transition:none !important; }
   }
+
+  /* ---------- Lenis smooth scroll (recommended reset, see lenis docs) ---------- */
+  html.lenis, html.lenis body{ height:auto; }
+  .lenis.lenis-smooth{ scroll-behavior:auto !important; }
+  .lenis.lenis-smooth [data-lenis-prevent]{ overscroll-behavior:contain; }
+  .lenis.lenis-stopped{ overflow:hidden; }
 </style>
 </head>
 <body>
@@ -619,6 +627,35 @@
   window.__aceroInit = true;
 
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---- Lenis smooth scroll, wired into the GSAP ticker (keeps Phase 3's ScrollTrigger in sync) ----
+  var lenis = null;
+  if (!reduceMotion && window.Lenis && window.gsap){
+    lenis = new Lenis({
+      duration: 1.15,
+      easing: function(t){ return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+      smoothWheel: true
+    });
+
+    gsap.ticker.add(function(time){
+      lenis.raf(time * 1000);
+    });
+    gsap.ticker.lagSmoothing(0);
+
+    window.__aceroLenis = lenis;
+
+    document.querySelectorAll('a[href^="#"]').forEach(function(link){
+      link.addEventListener('click', function(e){
+        var id = link.getAttribute('href');
+        if (id.length < 2) return;
+        var target = document.querySelector(id);
+        if (!target) return;
+        e.preventDefault();
+        lenis.scrollTo(target, { offset: -64 });
+      });
+    });
+  }
+
   if (reduceMotion || !('IntersectionObserver' in window)) return;
 
   document.documentElement.classList.add('acero-js-motion');
