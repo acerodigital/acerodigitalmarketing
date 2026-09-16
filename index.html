@@ -11,6 +11,14 @@
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
 <style>
   :root{
     --acero-white:#FFFFFF;
@@ -75,20 +83,14 @@
   }
   .acero-plainlist strong{ color:var(--acero-slate-900); }
 
-  /* ---------- Bot placeholder marker (Phase 4 replaces with the real Three.js bot) ---------- */
+  /* ---------- 3D bot canvas (Phase 4) ---------- */
   #acero-main{ position:relative; }
-  .acero-bot-marker{
-    position:absolute; top:40px; left:12%; width:26px; height:26px; z-index:5; pointer-events:none;
-    background:linear-gradient(135deg, var(--acero-blue-400), var(--acero-blue));
-    border-radius:8px; transform:translate(-50%,-50%) rotate(45deg);
-    box-shadow:0 14px 30px -10px rgba(22,78,189,0.55);
-    animation:acero-bot-pulse 2.4s ease-in-out infinite;
+  .acero-bot-canvas{
+    position:fixed; inset:0; width:100%; height:100%; z-index:30; pointer-events:none;
+    display:block;
   }
-  @keyframes acero-bot-pulse{
-    0%,100%{ transform:translate(-50%,-50%) rotate(45deg) scale(1); }
-    50%{ transform:translate(-50%,-50%) rotate(45deg) scale(1.14); }
-  }
-  @media (max-width:899px){ .acero-bot-marker{ display:none; } }
+  @media (max-width:899px){ .acero-bot-canvas{ display:none; } }
+  .acero-bot-canvas.is-hidden{ display:none; }
 
   /* ---------- Layout order utilities (desktop-only inversion) ---------- */
   @media (min-width:900px){
@@ -404,7 +406,7 @@
   </header>
 
   <main id="acero-main">
-    <div class="acero-bot-marker" aria-hidden="true"></div>
+    <canvas class="acero-bot-canvas" id="acero-bot-canvas" aria-hidden="true"></canvas>
 
     <!-- HERO -->
     <section id="acero-hero" class="acero-section acero-section--navy acero-hero" aria-label="Introduction">
@@ -840,7 +842,7 @@
     update();
   })();
 
-  // ---- Phase 3: GSAP ScrollTrigger — section pinning + bot-placeholder travel ----
+  // ---- Phase 3: GSAP ScrollTrigger — section pinning (bot travel now lives in the Phase 4 module script) ----
   if (window.gsap && window.ScrollTrigger){
     gsap.registerPlugin(ScrollTrigger);
 
@@ -863,51 +865,6 @@
           });
         });
 
-        // Placeholder bot marker: travels the full height of <main>, snapping toward
-        // whichever side each section's visual sits on. Phase 4 replaces this 2D
-        // stand-in with the real Three.js bot sampled along a spline by scroll
-        // progress — the checkpoints below are that same progress mapping, just
-        // driving a CSS top/left instead of a 3D curve.
-        var marker = document.querySelector('.acero-bot-marker');
-        var main = document.getElementById('acero-main');
-        if (marker && main){
-          var checkpoints = [
-            { id: 'acero-hero', side: 14 },
-            { id: 'acero-seo', side: 84 },
-            { id: 'acero-leadgen', side: 14 },
-            { id: 'acero-automation', side: 66 },
-            { id: 'acero-web', side: 16 },
-            { id: 'acero-crm', side: 80 },
-            { id: 'acero-va', side: 84 },
-            { id: 'acero-closing', side: 50 }
-          ];
-          var mainTop = main.getBoundingClientRect().top + window.scrollY;
-          var mainHeight = main.offsetHeight;
-          var tl = gsap.timeline({
-            defaults: { ease: 'none' },
-            scrollTrigger: {
-              trigger: main,
-              start: 'top top',
-              end: 'bottom bottom',
-              scrub: 0.6
-            }
-          });
-          var prevPos = 0;
-          checkpoints.forEach(function(cp, idx){
-            var el = document.getElementById(cp.id);
-            if (!el) return;
-            var rect = el.getBoundingClientRect();
-            var centerY = rect.top + window.scrollY - mainTop + rect.height / 2;
-            var pos = Math.max(0, Math.min(1, centerY / mainHeight));
-            if (idx === 0){
-              tl.set(marker, { top: centerY, left: cp.side + '%' }, 0);
-            } else {
-              tl.to(marker, { top: centerY, left: cp.side + '%', duration: Math.max(pos - prevPos, 0.01) }, prevPos);
-            }
-            prevPos = pos;
-          });
-        }
-
         return function(){
           // ScrollTrigger.matchMedia handles killing these triggers automatically
           // when the viewport crosses back below 900px.
@@ -920,6 +877,210 @@
     });
   }
 
+})();
+</script>
+
+<script type="module">
+// ---- Phase 4: the 3D bot ----
+// Placeholder model note: this uses RobotExpressive.glb, the official Three.js
+// example asset (Idle/Walking/Running clips), as the stand-in rigged character
+// per the brief's own fallback instruction. Flagging before treating it as
+// final — swap MODEL_URL for a commissioned custom model when ready.
+(async function(){
+  if (window.__aceroBotInit) return;
+  window.__aceroBotInit = true;
+
+  var canvas = document.getElementById('acero-bot-canvas');
+  if (!canvas) return;
+
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var isDesktop = window.matchMedia && window.matchMedia('(min-width: 900px)').matches;
+  if (reduceMotion || !isDesktop){
+    canvas.classList.add('is-hidden');
+    return;
+  }
+
+  var THREE, GLTFLoader;
+  try {
+    THREE = await import('three');
+    var loaderModule = await import('three/addons/loaders/GLTFLoader.js');
+    GLTFLoader = loaderModule.GLTFLoader;
+  } catch (e){
+    canvas.classList.add('is-hidden');
+    return;
+  }
+
+  var renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+  } catch (e){
+    canvas.classList.add('is-hidden');
+    return;
+  }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x000000, 0);
+  if ('outputColorSpace' in renderer) renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 100);
+  camera.position.set(0, 1.5, 6.2);
+  camera.lookAt(0, 0.78, 0);
+
+  scene.add(new THREE.HemisphereLight(0xEAF0FC, 0x0A1533, 1.1));
+  var keyLight = new THREE.DirectionalLight(0xFFFFFF, 1.4);
+  keyLight.position.set(2.2, 3.5, 2.6);
+  scene.add(keyLight);
+  var rimLight = new THREE.DirectionalLight(0x3E7BFA, 0.8);
+  rimLight.position.set(-2.6, 1.6, -2);
+  scene.add(rimLight);
+
+  function worldWidthAtZ(z){
+    var dist = camera.position.z - z;
+    var vFov = THREE.MathUtils.degToRad(camera.fov);
+    var height = 2 * Math.tan(vFov / 2) * dist;
+    return height * camera.aspect;
+  }
+
+  // Same journey the Phase 3 placeholder marker traced, now real 3D checkpoints:
+  // side (% of viewport width -> world X) and a little z depth for parallax.
+  // Automation sits further back since its diagram is the full-bleed backdrop;
+  // closing returns near the hero's side, echoing the loop the mark closes.
+  var CHECKPOINTS = [
+    { id: 'acero-hero', side: 22, z: 0 },
+    { id: 'acero-seo', side: 78, z: 0 },
+    { id: 'acero-leadgen', side: 22, z: 0.3 },
+    { id: 'acero-automation', side: 62, z: -0.6 },
+    { id: 'acero-web', side: 24, z: 0.3 },
+    { id: 'acero-crm', side: 76, z: 0 },
+    { id: 'acero-va', side: 78, z: 0.3 },
+    { id: 'acero-closing', side: 30, z: 0 }
+  ];
+
+  var curve;
+  function buildCurve(){
+    var w = worldWidthAtZ(0);
+    var points = CHECKPOINTS.map(function(cp){
+      return new THREE.Vector3((cp.side / 100 - 0.5) * w, 0, cp.z);
+    });
+    curve = new THREE.CatmullRomCurve3(points, false, 'catmullrom', 0.5);
+  }
+  buildCurve();
+
+  var robot = null;
+  var groundY = 0;
+  var mixer = null;
+  var walkAction = null;
+  var idleAction = null;
+  var walkTime = 0;
+  var FACING_OFFSET = Math.PI / 2;
+
+  var MODEL_URL = 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r160/examples/models/gltf/RobotExpressive/RobotExpressive.glb';
+
+  // RobotExpressive.glb is a skinned mesh: Box3.setFromObject reads the raw
+  // (unposed) attribute bounds, which do not match its actual bone-deformed
+  // render size — auto-scaling from that bounding box under-sizes the
+  // character by roughly 10-30x. Empirically measured against this camera
+  // instead (see Phase 4 notes): 0.28 renders it at a sensible on-screen size.
+  var ROBOT_SCALE = 0.28;
+
+  new GLTFLoader().load(MODEL_URL, function(gltf){
+    robot = gltf.scene;
+    robot.scale.setScalar(ROBOT_SCALE);
+    robot.position.y = groundY;
+
+    robot.traverse(function(node){
+      if (node.isMesh && node.material){
+        var mats = Array.isArray(node.material) ? node.material : [node.material];
+        mats.forEach(function(m){
+          if (m.color) m.color.lerp(new THREE.Color(0x164EBD), 0.3);
+          if ('metalness' in m) m.metalness = 0.55;
+          if ('roughness' in m) m.roughness = 0.42;
+        });
+      }
+    });
+    scene.add(robot);
+
+    mixer = new THREE.AnimationMixer(robot);
+    var clips = gltf.animations;
+    var walkClip = THREE.AnimationClip.findByName(clips, 'Walking');
+    var idleClip = THREE.AnimationClip.findByName(clips, 'Idle');
+    if (walkClip){
+      walkAction = mixer.clipAction(walkClip);
+      walkAction.play();
+      walkAction.paused = true;
+      walkAction.weight = 0;
+    }
+    if (idleClip){
+      idleAction = mixer.clipAction(idleClip);
+      idleAction.play();
+      idleAction.weight = 1;
+    }
+  }, undefined, function(){
+    canvas.classList.add('is-hidden');
+  });
+
+  var scrollProgress = 0;
+  if (window.gsap && window.ScrollTrigger){
+    ScrollTrigger.create({
+      trigger: '#acero-main',
+      start: 'top top',
+      end: 'bottom bottom',
+      onUpdate: function(self){ scrollProgress = self.progress; }
+    });
+  }
+
+  var isPaused = false;
+  document.addEventListener('visibilitychange', function(){
+    isPaused = document.hidden;
+  });
+  var mainEl = document.getElementById('acero-main');
+  if (mainEl && 'IntersectionObserver' in window){
+    new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        isPaused = !entry.isIntersecting || document.hidden;
+      });
+    }, { threshold: 0 }).observe(mainEl);
+  }
+
+  function tick(time, deltaTime){
+    if (isPaused || !curve) return;
+    var dt = Math.min((deltaTime || 16.7) / 1000, 0.05);
+    var t = Math.min(Math.max(scrollProgress, 0), 1);
+
+    if (robot){
+      var curvePoint = curve.getPointAt(t);
+      robot.position.set(curvePoint.x, groundY, curvePoint.z);
+      var tangent = curve.getTangentAt(Math.min(Math.max(t, 0.001), 0.999));
+      if (Math.abs(tangent.x) > 0.0005 || Math.abs(tangent.z) > 0.0005){
+        robot.rotation.y = Math.atan2(tangent.x, tangent.z) + FACING_OFFSET;
+      }
+
+      var lenis = window.__aceroLenis;
+      var speed = lenis ? Math.abs(lenis.velocity || 0) : 0;
+      if (walkAction && idleAction){
+        var targetWeight = Math.min(1, speed * 0.1);
+        walkAction.weight += (targetWeight - walkAction.weight) * 0.15;
+        idleAction.weight = 1 - walkAction.weight;
+        walkTime += speed * 0.025;
+        var clip = walkAction.getClip();
+        if (clip) walkAction.time = walkTime % clip.duration;
+      }
+    }
+    if (mixer) mixer.update(dt);
+    renderer.render(scene, camera);
+  }
+
+  if (window.gsap){
+    gsap.ticker.add(tick);
+  }
+
+  window.addEventListener('resize', function(){
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    buildCurve();
+  });
 })();
 </script>
 </body>
