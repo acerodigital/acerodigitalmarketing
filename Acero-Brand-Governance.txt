@@ -1,0 +1,117 @@
+ACERO DIGITAL MARKETING — BRAND GOVERNANCE
+Document 4b — companion to the Brand Guidelines deck (Document 4a) and the Project Charter (Document 1)
+Version 1.0
+
+===================================================================
+1. PURPOSE
+===================================================================
+This file is the enforcement layer for the Acero Brand Guidelines (35-slide
+deck). The deck defines the system — voice, color, type, marks, application.
+This file defines who owns it, how it's allowed to change, and which rules
+are non-negotiable versus adaptable. Upload both files to Project Knowledge
+together; they are meant to be read as one unit.
+
+===================================================================
+2. OWNERSHIP & DECISION RIGHTS
+===================================================================
+- Brand decisions are owned by whoever holds the Brand/Creative Lead role.
+- Until that role is formally named, decision rights default to the
+  Organization Owner.
+- Any team member can PROPOSE a change. Only the Brand/Creative Lead (or
+  Owner, until named) can RATIFY one.
+- Client account teams may request client-specific exceptions (e.g., a
+  client's own brand overlay on co-branded material) — exceptions require
+  sign-off from the Brand/Creative Lead and must be logged under Section 5.
+
+===================================================================
+3. WHAT IS FIXED VS. ADAPTABLE
+===================================================================
+FIXED (never override without a ratified version change):
+- The core palette: Gunmetal #23282D, Steel #8D96A0, Cool White #F4F5F6,
+  Forge Amber #E1672E.
+- The 60/15/15/10 application ratio (Section 23 of the deck).
+- Brand voice principles (confident, consultative, short/declarative,
+  rule-of-three, no filler) and the vocabulary Use/Avoid list.
+- The Standard Content Architecture (Problem -> What's Included -> 4-Step
+  Process -> Expected Results -> Example Outcome -> Why Acero -> Who It's
+  For) for full-length client-facing content.
+- The compliance rules inherited from the Organization Instructions —
+  brand guidance NEVER overrides a compliance rule. If the two conflict,
+  compliance wins, full stop.
+
+ADAPTABLE (may flex with sign-off, without a version bump):
+- Specific imagery choices, as long as they follow the Photography &
+  Imagery Direction (deck Section 27).
+- Social post copy variations, layout choices within the grid principles.
+- Minor wording of supporting taglines (deck Section 15), as long as the
+  primary tagline is unchanged.
+
+===================================================================
+4. THE LOGO STATUS FLAG
+===================================================================
+No final logo file exists as of Version 1.0. The lockup in the deck
+(Section 19) is a proportions-and-color specification, not a finished
+asset. Until a real logo file is produced and ratified:
+- Never present the deck's lockup as a final, ready-to-use logo to a
+  client or in external material.
+- Never fabricate or describe an Acero logo that isn't this specification.
+- Flag any request to "send the logo file" back to a human — there isn't
+  one yet.
+This flag is removed from this file the moment a real logo is ratified.
+
+===================================================================
+5. CHANGE REQUEST PROCESS
+===================================================================
+1. Propose: describe the change and which deck section it affects.
+2. Check against Section 3 above — is this Fixed or Adaptable?
+   - Adaptable: Brand/Creative Lead can approve directly, no version bump.
+   - Fixed: requires a version bump (see Section 6) and updates to both
+     the deck and this file before it's considered active.
+3. Log it: add a line to the change log (Section 7) regardless of size.
+4. If the change affects anything already encoded in the Organization
+   Instructions (see Section 8), update those too in the same change —
+   the two must never drift out of sync.
+
+===================================================================
+6. VERSIONING POLICY
+===================================================================
+- Version format: v[major].[minor] — e.g., v1.0, v1.1, v2.0.
+- Minor bump (v1.X): adaptable changes accumulated, or a Fixed-category
+  clarification that doesn't change the actual rule.
+- Major bump (v2.0): any change to the core palette, the primary logo
+  (once one exists), the primary tagline, or the brand voice principles.
+- Every major bump requires re-ratifying the affected deck sections and
+  re-issuing this governance file with an updated version number.
+- Skills that depend on brand rules (`acero-brand-voice-style`,
+  `acero-brand-governance-auditor`) should be reviewed after any bump.
+
+===================================================================
+7. CHANGE LOG
+===================================================================
+v1.0 — Initial ratification. Full 35-slide deck + this governance file
+established. Logo status: unresolved (see Section 4).
+
+[Add new entries above this line, newest first.]
+
+===================================================================
+8. RELATIONSHIP TO ORGANIZATION INSTRUCTIONS
+===================================================================
+The Organization Instructions (Team/Enterprise admin setting, 3,000-char
+limit) carry a condensed, always-on version of the Fixed rules from
+Section 3 — palette hex codes, type system, and the logo status flag —
+because those apply broadly enough to earn a place in every conversation
+org-wide. Everything else (the full rationale, the Adaptable rules, the
+application mockups, this governance process) stays here and in the deck,
+referenced rather than repeated. If you update the Fixed rules here, the
+Organization Instructions text must be updated in the same change (see
+Section 5, step 4) — that merged, current version is maintained as its
+own deliverable alongside this file.
+
+===================================================================
+9. AUDIT CADENCE
+===================================================================
+Run `acero-brand-governance-auditor` against live client-facing assets
+quarterly, or after any major version bump — whichever comes first.
+Findings get logged the same way as a change proposal (Section 5).
+
+END OF DOCUMENT 4b.
