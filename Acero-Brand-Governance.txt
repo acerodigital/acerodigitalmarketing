@@ -1,6 +1,6 @@
 ACERO DIGITAL MARKETING — BRAND GOVERNANCE
 Document 4b — companion to the Brand Guidelines deck (Document 4a) and the Project Charter (Document 1)
-Version 1.0
+Version 2.0
 
 ===================================================================
 1. PURPOSE
@@ -27,9 +27,16 @@ together; they are meant to be read as one unit.
 3. WHAT IS FIXED VS. ADAPTABLE
 ===================================================================
 FIXED (never override without a ratified version change):
-- The core palette: Gunmetal #23282D, Steel #8D96A0, Cool White #F4F5F6,
-  Forge Amber #E1672E.
-- The 60/15/15/10 application ratio (Section 23 of the deck).
+- The core palette (per Brand Guidelines deck v2, Sections 17-25): White
+  #FFFFFF (canvas), Brand Blue #164EBD (signal), Navy #0A1533 (foundation),
+  plus their full tint systems (Blue 700/500/400/300/100, Navy 700/500/300/100,
+  Slate 900/700/500/400/200/100, Sky 500/400/300/200/100) and the functional
+  status colors (success #1E9E63, caution #C98A12).
+- The application rules from deck Section 39: Navy for dark cover/divider
+  treatment only; White/Slate for all content sections; Brand Blue reserved
+  for CTAs, key numbers, and active states, never body copy or a full-bleed
+  background; one accent color per section; Blue+Sky pairing is
+  backgrounds-only, never competing text colors.
 - Brand voice principles (confident, consultative, short/declarative,
   rule-of-three, no filler) and the vocabulary Use/Avoid list.
 - The Standard Content Architecture (Problem -> What's Included -> 4-Step
@@ -49,15 +56,16 @@ ADAPTABLE (may flex with sign-off, without a version bump):
 ===================================================================
 4. THE LOGO STATUS FLAG
 ===================================================================
-No final logo file exists as of Version 1.0. The lockup in the deck
-(Section 19) is a proportions-and-color specification, not a finished
-asset. Until a real logo file is produced and ratified:
-- Never present the deck's lockup as a final, ready-to-use logo to a
-  client or in external material.
-- Never fabricate or describe an Acero logo that isn't this specification.
-- Flag any request to "send the logo file" back to a human — there isn't
-  one yet.
-This flag is removed from this file the moment a real logo is ratified.
+RESOLVED as of Version 2.0. The primary logo (forged "A" + growth-swoosh +
+closed-loop "D", per deck Sections 10-11) is a ratified, finished asset.
+Three approved variations are on file:
+- Primary / Transparent (full color, for light backgrounds)
+- White Reversed (for Navy/dark backgrounds)
+- Monochrome Navy
+Usage rules from deck Sections 12-15 (variation-by-background, minimum
+size, improper-use list) still apply and are unchanged. This flag stays
+in the file as a record that the status was once unresolved; it imposes
+no further restriction now that a logo is ratified.
 
 ===================================================================
 5. CHANGE REQUEST PROCESS
@@ -88,6 +96,17 @@ This flag is removed from this file the moment a real logo is ratified.
 ===================================================================
 7. CHANGE LOG
 ===================================================================
+v2.0 — Major bump. Re-ratified against Brand Guidelines deck v2 (2026,
+42 slides): core palette corrected to White #FFFFFF / Brand Blue #164EBD
+/ Navy #0A1533 + tint systems (Sections 17-25 of the deck), replacing the
+stale v1.0 Gunmetal/Steel/Cool White/Forge Amber values which had drifted
+out of sync with the deck. Logo status flag (Section 4) resolved — three
+ratified logo files (Transparent, White Reversed, Monochrome Navy) are on
+file. Trigger: discovered mid-build for the Acero Digital Marketing
+homepage project when the deck, the on-file logo assets, and this file
+disagreed; discrepancy raised to the Organization Owner and resolved per
+Section 5's change request process.
+
 v1.0 — Initial ratification. Full 35-slide deck + this governance file
 established. Logo status: unresolved (see Section 4).
 
