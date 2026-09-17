@@ -1069,20 +1069,60 @@
       roughness: 0.15, clearcoat: 1.0, clearcoatRoughness: 0.05
     });
 
-    // Legs: one continuous tapered lathe per leg (hip bulge -> taper -> foot -> tip),
-    // so the joint and limb read as one surface instead of a ball stacked on a cylinder.
-    var legProfile = [
-      [0.0, 0.02], [0.08, 0.005], [0.115, -0.05], [0.10, -0.12], [0.085, -0.20],
-      [0.068, -0.30], [0.060, -0.38], [0.072, -0.42], [0.05, -0.455], [0.0, -0.47]
-    ];
+    // Legs: a genuine kinematic chain per leg — hip joint -> upper leg -> knee
+    // joint -> lower leg -> ankle joint -> foot, each segment parented to the
+    // joint above it, so the whole chain is one connected hierarchy (not sibling
+    // meshes placed at matching coordinates) and holds together from any angle.
     [-1, 1].forEach(function(side){
-      var leg = latheMesh(legProfile, bodyMat);
-      leg.position.set(side * 0.11, 0.42, 0);
-      group.add(leg);
-      var ankleRing = new THREE.Mesh(new THREE.TorusGeometry(0.062, 0.011, 8, 20), accentMat);
-      ankleRing.rotation.x = Math.PI / 2;
-      ankleRing.position.set(side * 0.11, 0.42 - 0.40, 0);
-      group.add(ankleRing);
+      var hipPivot = new THREE.Group();
+      hipPivot.position.set(side * 0.11, 0.42, 0);
+      group.add(hipPivot);
+
+      var hipJoint = new THREE.Mesh(new THREE.SphereGeometry(0.065, 18, 14), accentMat);
+      hipPivot.add(hipJoint);
+
+      var upperLeg = new THREE.Group();
+      hipPivot.add(upperLeg);
+      var upperLegProfile = [
+        [0.0, 0.01], [0.085, 0.0], [0.09, -0.06], [0.08, -0.13],
+        [0.066, -0.19], [0.05, -0.22], [0.0, -0.225]
+      ];
+      upperLeg.add(latheMesh(upperLegProfile, bodyMat, 24));
+
+      var kneePivot = new THREE.Group();
+      kneePivot.position.set(0, -0.225, 0);
+      kneePivot.rotation.x = 0.46; // visible knee bend, lower leg tucks slightly back
+      upperLeg.add(kneePivot);
+
+      var kneeJoint = new THREE.Mesh(new THREE.SphereGeometry(0.042, 16, 12), accentMat);
+      kneePivot.add(kneeJoint);
+
+      var lowerLeg = new THREE.Group();
+      kneePivot.add(lowerLeg);
+      var lowerLegProfile = [
+        [0.0, 0.01], [0.058, 0.0], [0.06, -0.07], [0.052, -0.13],
+        [0.042, -0.17], [0.0, -0.18]
+      ];
+      lowerLeg.add(latheMesh(lowerLegProfile, bodyMat, 22));
+
+      var anklePivot = new THREE.Group();
+      anklePivot.position.set(0, -0.18, 0);
+      lowerLeg.add(anklePivot);
+
+      var ankleJoint = new THREE.Mesh(new THREE.SphereGeometry(0.032, 12, 10), accentMat);
+      anklePivot.add(ankleJoint);
+
+      // Foot: a rounded wedge (flattened, elongated sphere) instead of a capped
+      // tube end — tips forward off the ankle joint so it reads as a real foot.
+      var footPivot = new THREE.Group();
+      footPivot.position.set(0, -0.015, 0);
+      footPivot.rotation.x = Math.PI / 2 - 0.15;
+      anklePivot.add(footPivot);
+
+      var foot = new THREE.Mesh(new THREE.SphereGeometry(0.062, 16, 12), bodyMat);
+      foot.scale.set(0.85, 1.6, 0.6);
+      foot.position.set(0, 0.06, 0);
+      footPivot.add(foot);
     });
 
     // Torso: one continuous lathe, a smoothly curved body rather than a flat-sided box.
@@ -1115,28 +1155,56 @@
     neckRing.position.set(0, 0.42 + 0.40, 0);
     group.add(neckRing);
 
-    // Arms: one continuous tapered lathe per arm, same joint-to-limb continuity as the legs.
-    var armProfile = [
-      [0.0, 0.02], [0.06, 0.005], [0.088, -0.03], [0.075, -0.09], [0.058, -0.17],
-      [0.048, -0.24], [0.045, -0.30], [0.052, -0.335], [0.03, -0.352], [0.0, -0.365]
-    ];
+    // Arms: a genuine kinematic chain per arm — shoulder joint -> upper arm ->
+    // elbow joint -> forearm -> wrist joint -> hand, each segment parented to
+    // the joint above it (not a sibling mesh placed at a matching coordinate),
+    // so the chain holds together and reads correctly from every angle.
     [-1, 1].forEach(function(side){
-      var shoulder = new THREE.Group();
-      shoulder.position.set(side * 0.155, 0.78, 0);
-      shoulder.rotation.z = side * 0.3;
-      var arm = latheMesh(armProfile, bodyMat, 20);
-      shoulder.add(arm);
-      // Trim ring sits on the lathe's own built-in shoulder bulge — no separate
-      // ball mesh underneath it, so there's nothing for it to be disguising.
-      var shoulderRing = new THREE.Mesh(new THREE.TorusGeometry(0.088, 0.012, 10, 22), accentMat);
-      shoulderRing.rotation.x = Math.PI / 2;
-      shoulderRing.position.set(0, -0.03, 0);
-      shoulder.add(shoulderRing);
-      var wristRing = new THREE.Mesh(new THREE.TorusGeometry(0.046, 0.009, 8, 18), accentMat);
-      wristRing.rotation.x = Math.PI / 2;
-      wristRing.position.set(0, -0.315, 0);
-      shoulder.add(wristRing);
-      group.add(shoulder);
+      var shoulderPivot = new THREE.Group();
+      shoulderPivot.position.set(side * 0.16, 0.78, 0);
+      shoulderPivot.rotation.z = side * 0.22;
+      group.add(shoulderPivot);
+
+      var shoulderJoint = new THREE.Mesh(new THREE.SphereGeometry(0.055, 18, 14), accentMat);
+      shoulderPivot.add(shoulderJoint);
+
+      var upperArm = new THREE.Group();
+      shoulderPivot.add(upperArm);
+      var upperArmProfile = [
+        [0.0, 0.01], [0.07, 0.0], [0.075, -0.05], [0.068, -0.11],
+        [0.058, -0.16], [0.04, -0.18], [0.0, -0.185]
+      ];
+      upperArm.add(latheMesh(upperArmProfile, bodyMat, 24));
+
+      var elbowPivot = new THREE.Group();
+      elbowPivot.position.set(0, -0.185, 0);
+      elbowPivot.rotation.x = -0.6; // visible elbow bend, forearm swings forward
+      upperArm.add(elbowPivot);
+
+      var elbowJoint = new THREE.Mesh(new THREE.SphereGeometry(0.035, 16, 12), accentMat);
+      elbowPivot.add(elbowJoint);
+
+      var forearm = new THREE.Group();
+      elbowPivot.add(forearm);
+      var forearmProfile = [
+        [0.0, 0.01], [0.05, 0.0], [0.052, -0.07], [0.046, -0.12],
+        [0.036, -0.155], [0.0, -0.165]
+      ];
+      forearm.add(latheMesh(forearmProfile, bodyMat, 22));
+
+      var wristPivot = new THREE.Group();
+      wristPivot.position.set(0, -0.165, 0);
+      forearm.add(wristPivot);
+
+      var wristJoint = new THREE.Mesh(new THREE.SphereGeometry(0.026, 12, 10), accentMat);
+      wristPivot.add(wristJoint);
+
+      // Hand: a rounded mitten/paddle (flattened, elongated sphere) instead of
+      // a capped tube end — continues naturally downward off the wrist joint.
+      var hand = new THREE.Mesh(new THREE.SphereGeometry(0.05, 16, 12), bodyMat);
+      hand.scale.set(0.9, 1.3, 0.6);
+      hand.position.set(0, -0.05, 0);
+      wristPivot.add(hand);
     });
 
     // Head — noticeably larger relative to the body per the redesign, for a more
