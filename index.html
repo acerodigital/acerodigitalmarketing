@@ -1072,7 +1072,7 @@
     // Legs: one continuous tapered lathe per leg (hip bulge -> taper -> foot -> tip),
     // so the joint and limb read as one surface instead of a ball stacked on a cylinder.
     var legProfile = [
-      [0.10, 0], [0.115, -0.05], [0.10, -0.12], [0.085, -0.20],
+      [0.0, 0.02], [0.08, 0.005], [0.115, -0.05], [0.10, -0.12], [0.085, -0.20],
       [0.068, -0.30], [0.060, -0.38], [0.072, -0.42], [0.05, -0.455], [0.0, -0.47]
     ];
     [-1, 1].forEach(function(side){
@@ -1117,12 +1117,12 @@
 
     // Arms: one continuous tapered lathe per arm, same joint-to-limb continuity as the legs.
     var armProfile = [
-      [0.075, 0], [0.088, -0.03], [0.075, -0.09], [0.058, -0.17],
+      [0.0, 0.02], [0.06, 0.005], [0.088, -0.03], [0.075, -0.09], [0.058, -0.17],
       [0.048, -0.24], [0.045, -0.30], [0.052, -0.335], [0.03, -0.352], [0.0, -0.365]
     ];
     [-1, 1].forEach(function(side){
       var shoulder = new THREE.Group();
-      shoulder.position.set(side * 0.195, 0.78, 0);
+      shoulder.position.set(side * 0.155, 0.78, 0);
       shoulder.rotation.z = side * 0.3;
       var arm = latheMesh(armProfile, bodyMat, 20);
       shoulder.add(arm);
