@@ -1026,6 +1026,28 @@
     return tex;
   }
 
+  // Vertical scan-line texture for the LED-strip eyes, in brand blue rather
+  // than a generic cool blue.
+  function makeEyeTexture(){
+    var c = document.createElement('canvas');
+    c.width = 32; c.height = 96;
+    var ctx = c.getContext('2d');
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, 32, 96);
+    var stripeH = 6, gap = 4;
+    for (var y = 3; y < 90; y += stripeH + gap){
+      var grad = ctx.createLinearGradient(0, y, 32, y);
+      grad.addColorStop(0, 'rgba(62,123,250,0.15)');
+      grad.addColorStop(0.5, '#6E9BF2');
+      grad.addColorStop(1, 'rgba(62,123,250,0.15)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(1, y, 30, stripeH);
+    }
+    var tex = new THREE.CanvasTexture(c);
+    if ('colorSpace' in tex) tex.colorSpace = THREE.SRGBColorSpace;
+    return tex;
+  }
+
   // Custom bot: rounded primitives only, light body shell, Brand Blue at the
   // joints/seams, glowing screen-face. See the Phase 4 design-pass note above.
   function latheMesh(points, material, segments){
@@ -1039,11 +1061,13 @@
     var group = new THREE.Group();
     group.name = 'acero-bot-root';
 
-    var bodyMat = new THREE.MeshPhysicalMaterial({ color: 0xEAF0FC, roughness: 0.32, metalness: 0.08, clearcoat: 0.6, clearcoatRoughness: 0.25 });
-    var accentMat = new THREE.MeshPhysicalMaterial({ color: 0x164EBD, roughness: 0.28, metalness: 0.55, clearcoat: 0.5, clearcoatRoughness: 0.2 });
-    var visorMat = new THREE.MeshPhysicalMaterial({ color: 0x0A1533, roughness: 0.12, metalness: 0.4, clearcoat: 0.9, clearcoatRoughness: 0.08 });
-    var eyeCoreMat = new THREE.MeshStandardMaterial({ color: 0x0A1533, emissive: 0x3E7BFA, emissiveIntensity: 3.0, roughness: 0.4 });
-    var lensMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.04, metalness: 0, transmission: 1.0, thickness: 0.04, ior: 1.45, clearcoat: 1.0, clearcoatRoughness: 0.03 });
+    var bodyMat = new THREE.MeshPhysicalMaterial({ color: 0xEAF0FC, roughness: 0.2, metalness: 0.05, clearcoat: 1.0, clearcoatRoughness: 0.04 });
+    var accentMat = new THREE.MeshPhysicalMaterial({ color: 0x164EBD, roughness: 0.18, metalness: 0.5, clearcoat: 1.0, clearcoatRoughness: 0.04 });
+    var visorMat = new THREE.MeshPhysicalMaterial({ color: 0x040509, roughness: 0.12, metalness: 0.3, clearcoat: 1.0, clearcoatRoughness: 0.04 });
+    var eyeLensMat = new THREE.MeshPhysicalMaterial({
+      color: 0x02030a, emissive: 0xffffff, emissiveMap: makeEyeTexture(), emissiveIntensity: 2.4,
+      roughness: 0.15, clearcoat: 1.0, clearcoatRoughness: 0.05
+    });
 
     // Legs: one continuous tapered lathe per leg (hip bulge -> taper -> foot -> tip),
     // so the joint and limb read as one surface instead of a ball stacked on a cylinder.
@@ -1102,9 +1126,12 @@
       shoulder.rotation.z = side * 0.3;
       var arm = latheMesh(armProfile, bodyMat, 20);
       shoulder.add(arm);
-      var shoulderBall = new THREE.Mesh(new THREE.SphereGeometry(0.085, 18, 14), accentMat);
-      shoulderBall.position.set(0, 0.01, 0);
-      shoulder.add(shoulderBall);
+      // Trim ring sits on the lathe's own built-in shoulder bulge — no separate
+      // ball mesh underneath it, so there's nothing for it to be disguising.
+      var shoulderRing = new THREE.Mesh(new THREE.TorusGeometry(0.088, 0.012, 10, 22), accentMat);
+      shoulderRing.rotation.x = Math.PI / 2;
+      shoulderRing.position.set(0, -0.03, 0);
+      shoulder.add(shoulderRing);
       var wristRing = new THREE.Mesh(new THREE.TorusGeometry(0.046, 0.009, 8, 18), accentMat);
       wristRing.rotation.x = Math.PI / 2;
       wristRing.position.set(0, -0.315, 0);
@@ -1123,15 +1150,11 @@
     visor.position.set(0, headY - 0.005, 0.265);
     group.add(visor);
 
-    // Eyes: an emissive core behind a clear, curved lens for actual glass depth
-    // (refraction/reflection) instead of a flat glowing disc.
+    // Eyes: vertical LED-strip lenses (scan-line emissive texture on a glossy
+    // near-black capsule) set into the visor, rather than round glowing discs.
     [-1, 1].forEach(function(side){
-      var core = new THREE.Mesh(new THREE.SphereGeometry(0.05, 16, 12), eyeCoreMat);
-      core.position.set(side * 0.10, headY, 0.325);
-      group.add(core);
-      var lens = new THREE.Mesh(new THREE.SphereGeometry(0.066, 20, 16, 0, Math.PI * 2, 0, Math.PI / 1.7), lensMat);
+      var lens = new THREE.Mesh(new THREE.CapsuleGeometry(0.028, 0.05, 4, 14), eyeLensMat);
       lens.position.set(side * 0.10, headY, 0.31);
-      lens.rotation.x = Math.PI;
       group.add(lens);
       var glow = new THREE.PointLight(0x3E7BFA, 0.55, 0.6, 2);
       glow.position.set(side * 0.10, headY, 0.34);
